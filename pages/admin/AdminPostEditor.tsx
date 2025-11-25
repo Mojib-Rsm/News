@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNews } from '../../context/NewsContext';
-import { CATEGORIES, AUTHORS } from '../../constants';
+import { CATEGORIES, AUTHORS, generateSlug } from '../../constants';
 import { CategoryId } from '../../types';
+import { RefreshCw } from 'lucide-react';
 
 const AdminPostEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,11 +14,13 @@ const AdminPostEditor: React.FC = () => {
 
   const [formData, setFormData] = useState({
     title: '',
+    slug: '',
     excerpt: '',
     content: '',
     category: CategoryId.NATIONAL,
     author: AUTHORS[0].name,
     imageUrl: 'https://picsum.photos/800/450',
+    tags: '',
     isBreaking: false,
     isFeatured: false,
   });
@@ -27,11 +31,13 @@ const AdminPostEditor: React.FC = () => {
       if (article) {
         setFormData({
           title: article.title,
+          slug: article.slug,
           excerpt: article.excerpt,
           content: article.content,
           category: article.category,
           author: article.author,
           imageUrl: article.imageUrl,
+          tags: article.tags ? article.tags.join(', ') : '',
           isBreaking: article.isBreaking || false,
           isFeatured: article.isFeatured || false,
         });
@@ -49,24 +55,30 @@ const AdminPostEditor: React.FC = () => {
     }
   };
 
+  const handleGenerateSlug = () => {
+    if (formData.title) {
+      setFormData(prev => ({ ...prev, slug: generateSlug(prev.title) }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Process tags
+    const tagList = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+
+    const articleData = {
+      ...formData,
+      tags: tagList,
+      views: isEditing ? articles.find(a => a.id === id)?.views || 0 : 0,
+      publishedAt: isEditing ? articles.find(a => a.id === id)?.publishedAt || new Date().toISOString() : new Date().toISOString(),
+    };
+
     if (isEditing && id) {
-      updateArticle({
-        id,
-        ...formData,
-        views: articles.find(a => a.id === id)?.views || 0,
-        publishedAt: articles.find(a => a.id === id)?.publishedAt || new Date().toISOString(),
-      });
+      updateArticle({ id, ...articleData });
       alert('নিউজ আপডেট করা হয়েছে!');
     } else {
-      addArticle({
-        id: Date.now().toString(),
-        ...formData,
-        views: 0,
-        publishedAt: new Date().toISOString(),
-      });
+      addArticle({ id: Date.now().toString(), ...articleData });
       alert('নতুন নিউজ প্রকাশিত হয়েছে!');
     }
     navigate('/admin/posts');
@@ -91,6 +103,30 @@ const AdminPostEditor: React.FC = () => {
               className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               placeholder="নিউজ শিরোনাম লিখুন"
             />
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Slug (URL)</label>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                name="slug"
+                value={formData.slug} 
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono text-sm"
+                placeholder="news-title-slug"
+              />
+              <button 
+                type="button" 
+                onClick={handleGenerateSlug}
+                className="bg-gray-100 px-4 py-2 rounded border border-gray-300 hover:bg-gray-200 text-gray-600"
+                title="শিরোনাম থেকে অটো তৈরি করুন"
+              >
+                <RefreshCw size={20} />
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Unique URL identifier (Example: padma-bridge-record)</p>
           </div>
 
           <div>
@@ -134,6 +170,18 @@ const AdminPostEditor: React.FC = () => {
             {formData.imageUrl && (
               <img src={formData.imageUrl} alt="Preview" className="mt-2 h-32 w-auto rounded border" />
             )}
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">ট্যাগ (কমা দিয়ে লিখুন)</label>
+            <input 
+              type="text" 
+              name="tags"
+              value={formData.tags} 
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              placeholder="যেমন: রাজনীতি, নির্বাচন, বাংলাদেশ"
+            />
           </div>
 
           <div className="col-span-2">

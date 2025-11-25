@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Article } from '../types';
 import { MOCK_ARTICLES } from '../constants';
@@ -8,6 +9,7 @@ interface NewsContextType {
   updateArticle: (article: Article) => void;
   deleteArticle: (id: string) => void;
   getArticle: (id: string) => Article | undefined;
+  getArticleBySlug: (slug: string) => Article | undefined;
 }
 
 const NewsContext = createContext<NewsContextType | undefined>(undefined);
@@ -31,8 +33,12 @@ export const NewsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return articles.find(a => a.id === id);
   };
 
+  const getArticleBySlug = (slug: string) => {
+    return articles.find(a => a.slug === slug);
+  };
+
   return (
-    <NewsContext.Provider value={{ articles, addArticle, updateArticle, deleteArticle, getArticle }}>
+    <NewsContext.Provider value={{ articles, addArticle, updateArticle, deleteArticle, getArticle, getArticleBySlug }}>
       {children}
     </NewsContext.Provider>
   );

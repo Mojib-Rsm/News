@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/Header';
@@ -6,6 +7,7 @@ import BreakingNewsTicker from './components/BreakingNewsTicker';
 import HomePage from './pages/HomePage';
 import ArticlePage from './pages/ArticlePage';
 import AuthorPage from './pages/AuthorPage';
+import TagPage from './pages/TagPage';
 import LoginPage from './pages/LoginPage';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -33,8 +35,9 @@ const App: React.FC = () => {
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/article/:id" element={<ArticlePage />} />
+            <Route path="/news/:slug" element={<ArticlePage />} />
             <Route path="/author/:authorName" element={<AuthorPage />} />
+            <Route path="/tag/:tagSlug" element={<TagPage />} />
             <Route path="/category/:id" element={<div className="text-center py-20 text-xl">এই বিভাগের খবর খুব শীঘ্রই আসছে... <br/> <a href="/" className="text-primary hover:underline text-base block mt-4">হোমপেজে ফিরে যান</a></div>} />
           </Route>
 

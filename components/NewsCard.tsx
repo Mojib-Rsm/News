@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types';
@@ -21,9 +22,11 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'standard' }) =>
     return new Date(dateString).toLocaleDateString('bn-BD');
   };
 
+  const linkPath = `/news/${article.slug}`;
+
   if (variant === 'featured') {
     return (
-      <Link to={`/article/${article.id}`} className="group block h-full relative overflow-hidden rounded shadow-sm">
+      <Link to={linkPath} className="group block h-full relative overflow-hidden rounded shadow-sm">
         <img 
           src={article.imageUrl} 
           alt={article.title} 
@@ -42,7 +45,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'standard' }) =>
 
   if (variant === 'sidebar') {
     return (
-      <Link to={`/article/${article.id}`} className="flex gap-3 group mb-4 items-start">
+      <Link to={linkPath} className="flex gap-3 group mb-4 items-start">
         <div className="w-24 h-16 shrink-0 overflow-hidden rounded bg-gray-200">
            <img src={article.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
         </div>
@@ -61,7 +64,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'standard' }) =>
 
   // Standard and Compact
   return (
-    <Link to={`/article/${article.id}`} className="group flex flex-col h-full bg-white rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <Link to={linkPath} className="group flex flex-col h-full bg-white rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className={`overflow-hidden relative ${variant === 'compact' ? 'h-32' : 'h-48'}`}>
         <img 
           src={article.imageUrl} 

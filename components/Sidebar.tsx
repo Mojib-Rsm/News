@@ -1,7 +1,10 @@
+
 import React, { useState } from 'react';
 import { useNews } from '../context/NewsContext';
 import NewsCard from './NewsCard';
-import { CloudSun, TrendingUp, Mail } from 'lucide-react';
+import { CloudSun, TrendingUp, Mail, Tag } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { POPULAR_TAGS } from '../constants';
 
 const Sidebar: React.FC = () => {
   const { articles } = useNews();
@@ -49,6 +52,24 @@ const Sidebar: React.FC = () => {
             <NewsCard key={article.id} article={article} variant="sidebar" />
           ))}
         </div>
+      </div>
+
+      {/* Tags Cloud */}
+      <div className="bg-white p-6 rounded shadow-sm border border-gray-100">
+         <h4 className="font-bold border-b pb-2 mb-4 flex items-center text-gray-800">
+           <Tag className="w-4 h-4 mr-2 text-primary"/> জনপ্রিয় বিষয়
+         </h4>
+         <div className="flex flex-wrap gap-2">
+            {POPULAR_TAGS.map(tag => (
+              <Link 
+                key={tag} 
+                to={`/tag/${tag}`}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm px-3 py-1 rounded transition-colors"
+              >
+                {tag}
+              </Link>
+            ))}
+         </div>
       </div>
 
       {/* Ad Square 300x250 */}

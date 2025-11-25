@@ -1,28 +1,29 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useNews } from '../context/NewsContext';
 import { CATEGORIES } from '../constants';
 import Sidebar from '../components/Sidebar';
-import { Calendar, User, Eye, Share2, Sparkles, MessageSquare, Printer, Link as LinkIcon, Check, Facebook, MessageCircle } from 'lucide-react';
+import { Calendar, User, Eye, Share2, Sparkles, MessageSquare, Printer, Link as LinkIcon, Check, Facebook, MessageCircle, Tag } from 'lucide-react';
 import { summarizeArticle } from '../services/geminiService';
 import NewsCard from '../components/NewsCard';
 
 const ArticlePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const { articles } = useNews();
+  const { slug } = useParams<{ slug: string }>();
+  const { articles, getArticleBySlug } = useNews();
   const [summary, setSummary] = useState<string | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Scroll to top on id change
+  // Scroll to top on slug change
   useEffect(() => {
     window.scrollTo(0, 0);
     setSummary(null); // Reset summary
     setCopied(false);
-  }, [id]);
+  }, [slug]);
 
-  const article = articles.find(a => a.id === id);
-  const relatedNews = articles.filter(a => a.category === article?.category && a.id !== id).slice(0, 3);
+  const article = slug ? getArticleBySlug(slug) : undefined;
+  const relatedNews = articles.filter(a => a.category === article?.category && a.id !== article?.id).slice(0, 3);
 
   if (!article) {
     return <div className="text-center py-20 text-xl text-gray-500">খবরটি পাওয়া যায়নি।</div>;
@@ -66,7 +67,7 @@ const ArticlePage: React.FC = () => {
         
         {/* Breadcrumb */}
         <div className="text-sm text-primary font-bold mb-4 uppercase tracking-wider">
-          {categoryLabel}
+          <Link to={`/category/${article.category}`} className="hover:underline">{categoryLabel}</Link>
         </div>
 
         {/* Headline */}
@@ -132,6 +133,22 @@ const ArticlePage: React.FC = () => {
              <p key={idx} className="mb-4 text-justify">{paragraph}</p>
            ))}
         </article>
+
+        {/* Tags */}
+        {article.tags && article.tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-8 no-print">
+             <Tag className="w-4 h-4 text-gray-500" />
+             {article.tags.map(tag => (
+               <Link 
+                 key={tag} 
+                 to={`/tag/${tag}`} 
+                 className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded-full transition-colors"
+               >
+                 #{tag}
+               </Link>
+             ))}
+          </div>
+        )}
 
         {/* Share Buttons */}
         <div className="flex flex-wrap items-center gap-3 border-t border-b border-gray-200 py-6 mb-8 no-print">

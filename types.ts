@@ -1,11 +1,14 @@
+
 export interface Article {
   id: string;
+  slug: string; // Unique URL identifier
   title: string;
   excerpt: string;
   content: string; // HTML or Markdown content
   author: string;
   publishedAt: string;
   category: CategoryId;
+  tags: string[]; // List of tags
   imageUrl: string;
   views: number;
   isBreaking?: boolean;
