@@ -180,8 +180,9 @@ const ArticlePage: React.FC = () => {
             onClick={handlePrint}
             className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-900 transition-colors text-sm font-medium ml-auto"
             title="প্রিন্ট করুন"
+            aria-label="Print Article"
           >
-            <Printer className="w-4 h-4" /> Print
+            <Printer className="w-4 h-4" /> Print Article
           </button>
         </div>
 

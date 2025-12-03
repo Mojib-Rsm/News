@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Outlet, Link } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import BreakingNewsTicker from './components/BreakingNewsTicker';
@@ -14,6 +13,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminPostList from './pages/admin/AdminPostList';
 import AdminPostEditor from './pages/admin/AdminPostEditor';
 import { NewsProvider } from './context/NewsContext';
+import { FileQuestion } from 'lucide-react';
 
 // Layout for public pages
 const PublicLayout: React.FC = () => (
@@ -24,6 +24,18 @@ const PublicLayout: React.FC = () => (
       <Outlet />
     </main>
     <Footer />
+  </div>
+);
+
+// 404 Not Found Component
+const NotFound: React.FC = () => (
+  <div className="flex flex-col items-center justify-center py-20 text-center">
+    <FileQuestion className="w-16 h-16 text-gray-300 mb-4" />
+    <h1 className="text-4xl font-bold text-gray-800 mb-2">৪০৪</h1>
+    <p className="text-gray-500 text-lg mb-6">দুঃখিত, আপনি যে পৃষ্ঠাটি খুঁজছেন তা পাওয়া যায়নি।</p>
+    <Link to="/" className="bg-primary text-white px-6 py-2 rounded hover:bg-red-700 transition-colors">
+      হোমপেজে ফিরে যান
+    </Link>
   </div>
 );
 
@@ -39,6 +51,8 @@ const App: React.FC = () => {
             <Route path="/author/:authorName" element={<AuthorPage />} />
             <Route path="/tag/:tagSlug" element={<TagPage />} />
             <Route path="/category/:id" element={<div className="text-center py-20 text-xl">এই বিভাগের খবর খুব শীঘ্রই আসছে... <br/> <a href="/" className="text-primary hover:underline text-base block mt-4">হোমপেজে ফিরে যান</a></div>} />
+            {/* Catch-all 404 for public layout */}
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           {/* Authentication */}
