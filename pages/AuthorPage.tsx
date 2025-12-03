@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getAuthorByName } from '../constants';
 import { useNews } from '../context/NewsContext';
 import NewsCard from '../components/NewsCard';
